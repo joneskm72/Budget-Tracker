@@ -1,39 +1,77 @@
-export function useIndexedDb("budget-tracker", storeName, method, object) {
-  return new Promise((resolve, reject) => {
-    const request = window.indexedDB.open("budget-tracker", 1);
-    let db,
-      tx,
-      store;
+const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
 
-    request.onupgradeneeded = function(e) {
-      const db = request.result;
-      db.createObjectStore(storeName, { keyPath: "_id" });
-    };
 
-    request.onerror = function(e) {
-      console.log("An error occurred");
-    };
+const request = indexedDB.open("budget-tracker", 1);
+let db
 
-    request.onsuccess = function(e) {
-      db = request.result;
-      tx = db.transaction(storeName, "readwrite");
-      store = tx.objectStore(storeName);
+request.onupgradeneeded = ({ target }) => {
+  const db = target.result;
+  db.createObjectStore("pending", { autoIncrement: true });
+};
 
-      db.onerror = function(e) {
-        console.log("error");
-      };
-      if (method === "put") {
-        store.put(object);
-      }
-      if (method === "get") {
-        const all = store.getAll();
-        all.onsuccess = function() {
-          resolve(all.result);
-        };
-      }
-      tx.oncomplete = function() {
-        db.close();
-      };
-    };
-  });
+request.onerror = function (e) {
+  console.log("An error occurred");
+};
+
+request.onsuccess = function (e) {
+  db = e.target.result;
+
+  if (navigator.onLine) {
+    checkDatabase()
+  }
 }
+request.onerror = function(e) {
+  console.log(e.target.errorCode)
+}
+
+
+// function saveRecord(record) {
+//   const tx = db.transaction(["pending"], "readwrite");
+//   const store = tx.objectStore("pending");
+//   store.add(record);
+// } 
+
+function checkDatabase() {
+  const tx = db.transaction(["pending"], "readwrite");
+  const store = tx.objectStore("pending");
+  const all = store.getAll();
+
+
+  all.onsuccess = function () {
+    if (all.result.length > 0) {
+      fetch("/api/transaction/bulk", {
+        method: "POST",
+        body: JSON.stringify(all.result),
+        headers: {
+          Accept: "application/json, text/plain",
+          "Content-Type": "application/json"
+        }
+
+      }).then(response => {
+        return response.json()
+      }).then(() => {
+        const tx = db.transaction(["pending"], "readwrite");
+        const store = tx.objectStore("pending");
+        store.clear();
+      })
+    }
+  }
+}
+
+window.addEventListener("online", checkDatabase)
+
+
+// db.onerror = function (e) {
+//   console.log("error");
+// };
+// if (method === "put") {
+//   store.put(object);
+// }
+// if (method === "get") {
+//   all.onsuccess = function () {
+//     resolve(all.result);
+//   };
+// }
+// tx.oncomplete = function () {
+//   db.close();
+// };
