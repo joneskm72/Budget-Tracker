@@ -37,7 +37,7 @@ function checkDatabase() {
   const all = store.getAll();
 
 
-  all.onsuccess = function () {
+  getAll.onsuccess = function () {
     if (all.result.length > 0) {
       fetch("/api/transaction/bulk", {
         method: "POST",
