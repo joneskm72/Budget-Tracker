@@ -4,8 +4,8 @@ const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexe
 const request = indexedDB.open("budget-tracker", 1);
 let db
 
-request.onupgradeneeded = ({ target }) => {
-  const db = target.result;
+request.onupgradeneeded = function(e) {
+  const db = e.target.result;
   db.createObjectStore("pending", { autoIncrement: true });
 };
 
@@ -25,11 +25,11 @@ request.onerror = function(e) {
 }
 
 
-// function saveRecord(record) {
-//   const tx = db.transaction(["pending"], "readwrite");
-//   const store = tx.objectStore("pending");
-//   store.add(record);
-// } 
+function saveRecord(record) {
+  const tx = db.transaction(["pending"], "readwrite");
+  const store = tx.objectStore("pending");
+  store.add(record);
+} 
 
 function checkDatabase() {
   const tx = db.transaction(["pending"], "readwrite");
