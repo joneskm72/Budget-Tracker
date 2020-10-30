@@ -1,12 +1,11 @@
 const FILES_TO_CACHE = [
-  "/icons/icon-192x192.png",
-  "/icons/icon-512x512.png",
   "/",
   "/db.js",
   "/index.js",
   "/manifest.webmanifest",
   "/styles.css",
-  "/webpack.config"
+  "/icons/icon-192x192.png",
+  "/icons/icon-512x512.png"
 ];
 
 const STATIC_CACHE = "static-cache-v2";
@@ -20,28 +19,28 @@ self.addEventListener("install", event => {
         return cache.addAll(FILES_TO_CACHE)
       })
   );
-  self.skipWaiting();
+  //self.skipWaiting();
 });
 
-self.addEventListener("activate", function(event) {
-  event.waitUntil(
-    caches.keys().then(keyList, function() {
-      return Promise.all(
-        keyList.map(key, function() {
-          if (key !== STATIC_CACHE && key !== DATA_CACHE) {
-            return caches.delete(key);
-          }
-        })
-      );
-    })
-  );
+// self.addEventListener("activate", function(event) {
+//   event.waitUntil(
+//     caches.keys().then(keyList, function() {
+//       return Promise.all(
+//         keyList.map(key, function() {
+//           if (key !== STATIC_CACHE && key !== DATA_CACHE) {
+//             return caches.delete(key);
+//           }
+//         })
+//       );
+//     })
+//   );
 
-  self.clients.claim();
-});
+//   self.clients.claim();
+// });
 
 self.addEventListener("fetch", function(event){
   if (event.request.url.includes("/api/")) {
-    event.respondsWith(
+    event.respondWith(
     caches.open(DATA_CACHE).then(cache => {
       return fetch(event.request).then(res => {
         if(res.status === 200) {
@@ -55,7 +54,7 @@ self.addEventListener("fetch", function(event){
     );
     return;
   }
-  event.respondsWith(
+  event.respondWith(
     fetch(event.request).catch(() => {
       return caches.match(event.request).then(response => {
         if(response) {

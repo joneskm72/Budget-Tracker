@@ -45,7 +45,6 @@ function checkDatabase() {
           Accept: "application/json, text/plain",
           "Content-Type": "application/json"
         }
-
       }).then(response => {
         return response.json()
       }).then(() => {
@@ -57,7 +56,7 @@ function checkDatabase() {
   }
 }
 
-window.addEventListener("online", checkDatabase)
+window.addEventListener("online", checkDatabase);
 
 
 // db.onerror = function (e) {
