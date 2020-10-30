@@ -1,6 +1,5 @@
 const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
 
-
 const request = indexedDB.open("budget-tracker", 1);
 let db
 
@@ -9,11 +8,11 @@ request.onupgradeneeded = function(e) {
   db.createObjectStore("pending", { autoIncrement: true });
 };
 
-request.onerror = function (e) {
+request.onerror = function(e) {
   console.log("An error occurred");
 };
 
-request.onsuccess = function (e) {
+request.onsuccess = function(e) {
   db = e.target.result;
 
   if (navigator.onLine) {
