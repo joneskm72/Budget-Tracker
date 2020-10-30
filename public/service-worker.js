@@ -9,8 +9,8 @@ const FILES_TO_CACHE = [
   "/webpack.config"
 ];
 
-const STATIC_CACHE = "static-cache-v1";
-const RUNTIME_CACHE = "runtime-cache";
+const STATIC_CACHE = "static-cache-v2";
+const DATA_CACHE = "data-cache-v1";
 
 self.addEventListener("install", event => {
   event.waitUntil(
@@ -28,7 +28,7 @@ self.addEventListener("activate", function(event) {
     caches.keys().then(keyList, function() {
       return Promise.all(
         keyList.map(key, function() {
-          if (key !== STATIC_CACHE && key !== RUNTIME_CACHE) {
+          if (key !== STATIC_CACHE && key !== DATA_CACHE) {
             return caches.delete(key);
           }
         })
@@ -42,7 +42,7 @@ self.addEventListener("activate", function(event) {
 self.addEventListener("fetch", function(event){
   if (event.request.url.includes("/api/")) {
     event.respondsWith(
-    caches.open(RUNTIME_CACHE).then(cache => {
+    caches.open(DATA_CACHE).then(cache => {
       return fetch(event.request).then(res => {
         if(res.status === 200) {
           cache.put(event.request.url, response.clone())
