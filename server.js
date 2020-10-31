@@ -4,6 +4,9 @@ const mongoose = require("mongoose");
 const compression = require("compression");
 
 const PORT = 3000;
+Promise.resolve(app.listen(port)).then(() => {
+  console.log("Running!");
+});
 
 const app = express();
 
