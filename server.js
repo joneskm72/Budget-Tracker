@@ -4,8 +4,8 @@ const mongoose = require("mongoose");
 const compression = require("compression");
 
 const PORT = 3000;
-Promise.resolve(app.listen(port)).then(() => {
-  console.log("Running!");
+app.listen(port, "0.0.0.0", function() {
+  console.log('Listening on Heroku defined port');
 });
 
 const app = express();
