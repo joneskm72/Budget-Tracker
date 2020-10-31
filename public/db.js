@@ -57,19 +57,3 @@ function checkDatabase() {
 }
 
 window.addEventListener("online", checkDatabase);
-
-
-// db.onerror = function (e) {
-//   console.log("error");
-// };
-// if (method === "put") {
-//   store.put(object);
-// }
-// if (method === "get") {
-//   all.onsuccess = function () {
-//     resolve(all.result);
-//   };
-// }
-// tx.oncomplete = function () {
-//   db.close();
-// };
