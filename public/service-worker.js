@@ -39,12 +39,8 @@ self.addEventListener("fetch", function(event){
   }
   event.respondWith(
     fetch(event.request).catch(() => {
-      return caches.match(event.request).then(response => {
-        if(response) {
-          return response;
-        } else if (event.request.headers.get("accept").includes("text/html")) {
-          return caches.match("/")
-        }
+      caches.match(evt.request).then(function(response) {
+        return response || fetch(evt.request);
       })
     }) 
   )
