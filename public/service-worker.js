@@ -21,6 +21,21 @@ self.addEventListener("install", event => {
   );
 });
 
+self.addEventListener("activate", function(event) {
+  event.waitUntil(
+    caches.keys().then(keyList => {
+      return Promise.all(
+        keyList.map(key => {
+          if (key !== STATIC_CACHE && key !== DATA_CACHE) {
+            console.log("Removed data", key);
+            return caches.delete(key);
+          }
+        })
+      );
+    })
+  );
+});
+
 self.addEventListener("fetch", function(event){
   if (event.request.url.includes("/api/")) {
     event.respondWith(
