@@ -25,7 +25,7 @@ self.addEventListener("install", event => {
   self.skipWaiting();
 });
 
-self.addEventListener("activate", function(event) {
+self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keyList => {
       return Promise.all(
@@ -41,7 +41,7 @@ self.addEventListener("activate", function(event) {
   self.clients.claim();
 });
 
-self.addEventListener("fetch", function(event){
+self.addEventListener("fetch", event => {
   if (event.request.url.includes("/api/")) {
     event.respondWith(
     caches.open(DATA_CACHE).then(cache => {
@@ -55,20 +55,23 @@ self.addEventListener("fetch", function(event){
       });
     }).catch(err => console.log(err))
     );
+
     return;
   }
-  // event.respondWith(
-  //   fetch(event.request).catch(() => {
-  //     return caches.match(event.request).then(response => {
-  //       if(response) {
-  //         return response;
-  //       } else if (event.request.headers.get("accept").includes("text/html")) {
-  //         return caches.match("/")
-  //       }
-  //     })
   event.respondWith(
-    caches.match(event.request).then(function(response) {
-      return response || fetch(event.request);
-    }) 
-  )
+    fetch(event.request).catch(() => {
+      return caches.match(event.request).then(response => {
+        if(response) {
+          return response;
+        } else if (event.request.headers.get("accept").includes("text/html")) {
+          return caches.match("/")
+        }
+      })
+
+    })
+  // event.respondWith(
+  //   caches.match(event.request).then(function(response) {
+  //     return response || fetch(event.request);
+  //   }) 
+    )
 });
