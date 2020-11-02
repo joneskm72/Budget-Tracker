@@ -42,7 +42,7 @@ function checkDatabase() {
         method: "POST",
         body: JSON.stringify(all.result),
         headers: {
-          Accept: "application/json, text/plain",
+          Accept: "application/json, */*, text/plain",
           "Content-Type": "application/json"
         }
       }).then(response => {
