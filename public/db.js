@@ -1,7 +1,7 @@
 const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
 
 const request = indexedDB.open("budget-tracker", 1);
-let db
+let db;
 
 request.onupgradeneeded = function(e) {
   const db = e.target.result;
@@ -18,17 +18,17 @@ request.onsuccess = function(e) {
   if (navigator.onLine) {
     checkDatabase()
   }
-}
+};
+
 request.onerror = function(e) {
   console.log(e.target.errorCode)
-}
-
+};
 
 function saveRecord(record) {
   const tx = db.transaction(["pending"], "readwrite");
   const store = tx.objectStore("pending");
   store.add(record);
-} 
+};
 
 function checkDatabase() {
   const tx = db.transaction(["pending"], "readwrite");
@@ -36,7 +36,7 @@ function checkDatabase() {
   const all = store.getAll();
 
 
-  all.onsuccess = function () {
+  all.onsuccess = function() {
     if (all.result.length > 0) {
       fetch("/api/transaction/bulk", {
         method: "POST",
@@ -54,6 +54,6 @@ function checkDatabase() {
       })
     }
   }
-}
+};
 
 window.addEventListener("online", checkDatabase);
