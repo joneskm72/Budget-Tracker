@@ -46,7 +46,7 @@ self.addEventListener("fetch", function(event){
     event.respondWith(
     caches.open(DATA_CACHE).then(cache => {
       return fetch(event.request).then(res => {
-        if(res.status === 200) {
+        if (res.status === 200) {
           cache.put(event.request.url, response.clone())
         }
         return response
