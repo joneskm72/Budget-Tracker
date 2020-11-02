@@ -52,15 +52,18 @@ self.addEventListener("fetch", function(event){
     );
     return;
   }
+  // event.respondWith(
+  //   fetch(event.request).catch(() => {
+  //     return caches.match(event.request).then(response => {
+  //       if(response) {
+  //         return response;
+  //       } else if (event.request.headers.get("accept").includes("text/html")) {
+  //         return caches.match("/")
+  //       }
+  //     })
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request).then(response => {
-        if(response) {
-          return response;
-        } else if (event.request.headers.get("accept").includes("text/html")) {
-          return caches.match("/")
-        }
-      })
+    caches.match(event.request).then(function(response) {
+      return response || fetch(event.request);
     }) 
   )
 });
