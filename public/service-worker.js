@@ -18,9 +18,7 @@ self.addEventListener("install", event => {
   event.waitUntil(
     caches
       .open(STATIC_CACHE)
-      .then(cache => {
-        return cache.addAll(FILES_TO_CACHE)
-      })
+      .then((cache) => cache.addAll(FILES_TO_CACHE))
   );
   self.skipWaiting();
 });
@@ -45,8 +43,8 @@ self.addEventListener("fetch", event => {
   if (event.request.url.includes("/api/")) {
     event.respondWith(
       caches.open(DATA_CACHE).then(cache => {
-        return fetch(event.request).then(res => {
-          if (res.status === 200) {
+        return fetch(event.request).then(response => {
+          if (response.status === 200) {
             cache.put(event.request.url, response.clone())
           }
         return response
